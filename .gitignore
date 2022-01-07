@@ -1,0 +1,7 @@
+# những thư mục không tải lên
+/node_modules
+/vendor
+# khi dùng PHP sẽ có vendor
+/.idea
+.idea/
+.env
