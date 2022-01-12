@@ -3,6 +3,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import viewEngine from "./config/viewEngine";
 import initWebRoutes from "./route/web";
+import connectDB from "./config/connectDB";
 
 // gọi tới config của thư viện dotenv để có thể process.env.
 require('dotenv').config();
@@ -15,6 +16,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}))
 viewEngine(app);
 initWebRoutes(app);
+
+// connectDB
+connectDB();
 
 // lấy ra từ file env
 let port = process.env.PORT || 6969;
