@@ -26,6 +26,25 @@ let postCRUD = async(req, res) => {
     console.log(message);
     return res.send('post CRUD from server')
 }
+
+let putCRUD = async (req, res) => {
+    let data = req.body;
+    let allUser = await CRUDService.updateUserData(data);
+    return res.render('displayCRUD.ejs',{
+        dataTable: allUser
+    })
+}
+
+let deleteCRUD = async (req, res) => {
+    let id = req.query.id;
+    if(id) {
+        await CRUDService.delete(id);
+        return res.send('delete the user succeed!')
+    }
+    else{
+        return res.send("user not found!");
+    }
+}
 //export ra
 module.exports = {
     getHomePage: getHomePage,

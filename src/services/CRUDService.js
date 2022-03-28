@@ -33,6 +33,47 @@ let hashUserPassword = (password) => {
         }
     })
 }
+// let updateUserData = (data) => {
+//     return new Promise((resolve, reject) => {
+//         try {
+//             let user = await db.User.findOne({
+//                 where: {id: data.id}
+//             })
+//             if(user) {
+//                 user.firstName = data.firstName;
+//                 user.lastName = data.lastName;
+//                 user.address = data.address;
+                
+//                 await user.save();
+//                 let allUser = await db.User.findAll();
+//                 resolve(allUser);
+//             }else{
+//                 resolve();
+//             }
+//         }catch(e){
+//             console.log(e);
+//         }
+//     })
+// }
+
+// let deleteUserById = (userId) => {
+//     return new Promise((resolve, reject) => {
+//         try {
+//             let user = await db.User.findOne({
+//                 where: {id: userId}
+//             })
+//             if(user) {
+//                 await user.destroy();
+//             }
+//             resolve();//return
+//         }catch(e) {{
+//             reject(e);
+//         }}
+//     })
+// }
+
 module.exports = {
-    createNewUser: createNewUser
+    createNewUser: createNewUser,
+    // deleteUserById: deleteUserById,
+    // updateUserData:updateUserData
 }
