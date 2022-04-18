@@ -1,8 +1,8 @@
 import db from "../models/index";
-// import bcrypt from 'bcryptjs';
-import bcycrpt from 'bcryptjs';
+// import bcycrpt from 'bcryptjs';
+var bcrypt = require('bcryptjs');
 
-const salt = bcycrpt.genSaltSync(10);
+const salt = bcrypt.genSaltSync(10);
 
 let hashUserPassword = (password) => {
     return new Promise(async (resolve, reject) => {
@@ -22,7 +22,8 @@ let handleUserLogin = (email,password) => {
             let isExist = await checkUserEmail(email);
             if(isExist) {
                 let user = await db.User.findOne({
-                    attributes: ['email','roleId','password'],
+                    //lấy thông tin nào sau khi log in
+                    attributes: ['email','roleId','password', 'firstName','lastName'],
                     where: {email: email},
                     raw: true,
                 });
@@ -97,7 +98,8 @@ let getAllUsers = (userId) => {
     })
 }
 
-let createNewUser = (data) => {
+let createNewUser = async (data) => {
+    console.log('create New User', data);
     return new Promise(async (resolve, reject) => {
         try {
             //check email is exist ??
@@ -107,28 +109,40 @@ let createNewUser = (data) => {
                     errCode: 1,
                     errMessage: 'Your email address is already in used. Please try another email address'
                 })
-            }else{
-                let hashPasswordFromnBcrypt = await hashUserPassword(data.password);
-                await db.User.create({
-                    email: data.email,
-                    password: hashPasswordFromnBcrypt,
-                    firstName: data.firstName,
-                    lastName: data.lastName,
-                    address: data.address,
-                    phoneNumber: data.phoneNumber,
-                    gender: data.gender === '1' ? true: false,
-                    roleId: data.roleId,
-                })
-                resolve({
-                    errCode: 0,
-                    message: 'OK'
-                })
             }
-        }catch (e) {
+            let hashPasswordFromnbcrypt = await hashUserPassword(data.password);
+            await db.User.create({
+                // email: data.email,
+                // password: hashPasswordFromnbcrypt,
+                // firstName: data.firstName,
+                // lastName: data.lastName,
+                // address: data.address,
+                // phoneNumber: data.phoneNumber,
+                // gender: data.gender,
+                // roleId: data.role,
+                // positionId: data.position
+                email: data.email,
+                password: hashPasswordFromnbcrypt,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                address: data.address,
+                phoneNumber: data.phoneNumber,
+                gender: data.gender === '1' ? true: false,
+                roleId: data.roleId,
+                positionId: data.position, //tại sao không là data.positionId
+                image: data.avatar
+            })
+            resolve({
+                errCode: 0,
+                message: 'OK'
+            })
+        } catch (e) {
+            
             reject(e);
         }
     })
 }
+
 let deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         let foundUser = await db.User.findOne({
@@ -156,7 +170,8 @@ let deleteUser = (userId) => {
 let updateUserData = (data) => {
     return new Promise(async(resolve, reject) => {
         try{
-            if(!data.id) {
+            console.log('check data from nodejs',data)
+            if(!data.id || !data.roleId || !data.positionId || !data.gender) {
                 resolve({
                     errCode: 2,
                     errMessage: 'Missing required parameter'
@@ -170,6 +185,13 @@ let updateUserData = (data) => {
                 user.firstName = data.firstName;
                 user.lastName = data.lastName;
                 user.address = data.address;
+                user.roleId = data.roleId;
+                user.positionId = data.positionId;
+                user.gender = data.gender;
+                user.phoneNumber = data.phoneNumber;
+                if(data.avatar) {
+                    user.image = data.avatar; //lấy từ phần Create với trường image:data.avatar
+                }
 
                 await user.save();
                 // await db.User.save({

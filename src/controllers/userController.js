@@ -33,11 +33,12 @@ let handleGetAllUser = async (req, res) => {
         users
     })
 }
+
 let handleCreateNewUser = async(req, res) => {
     let message = await userService.createNewUser(req.body)
-    console.log(message);
     return res.status(200).json(message);
 }
+
 let handleDeleteUser = async (req, res) => {
     if(!req.body.id) {
         return res.status(200).json({
@@ -58,6 +59,7 @@ let getAllCode = async (req, res) => {
     try{
         let data = await userService.getAllCodeService(req.query.type);
         return res.status(200).json(data);
+
     }catch (e) {
         console.log('Get all code error' + e);
         return res.status(200).json({
